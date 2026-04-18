@@ -1,3 +1,5 @@
+import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@0.6.0/bundle.js";
+
 const connectBtn = document.getElementById('connect-btn');
 const flashBtn = document.getElementById('flash-btn');
 const consoleElement = document.getElementById('console');
@@ -12,7 +14,7 @@ let esploader = null;
 const PLACEHOLDERS = {
     target_ssid: "TARGET_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
     target_pass: "TARGET_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
-    new_ssid:    "NEW_SSID_PLACE_HOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", // Fix: Match exactly
+    new_ssid:    "NEW_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
     new_pass:    "NEW_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6"
 };
 
