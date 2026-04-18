@@ -1,140 +1,131 @@
-import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@0.6.0/bundle.js";
-
-const connectBtn = document.getElementById('connect-btn');
-const flashBtn = document.getElementById('flash-btn');
-const consoleElement = document.getElementById('console');
-const statusDot = document.getElementById('status-dot');
-const statusText = document.getElementById('status-text');
-
-let device = null;
-let transport = null;
-let esploader = null;
-
-// Binary Patching Placeholders (Must match Arduino code exactly)
-const PLACEHOLDERS = {
-    target_ssid: "TARGET_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
-    target_pass: "TARGET_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
-    new_ssid:    "NEW_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6",
-    new_pass:    "NEW_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6"
+const translations = {
+    en: {
+        title: "WIFI CONFIGURATOR",
+        subtitle: "Configure your extender and download the local source code.",
+        targetTitle: "TARGET NETWORK",
+        targetSsid: "SSID (WiFi Name)",
+        targetPass: "Password",
+        newTitle: "EXTENDED NETWORK",
+        newSsid: "New SSID",
+        newPass: "New Password",
+        downloadBtn: "GENERATE & DOWNLOAD (.ZIP)",
+        hint: "The ZIP will contain the pre-configured .ino file and a setup guide.",
+        readmeTitle: "ESP32 WIFI EXTENDER - SETUP GUIDE",
+        readmeStep1: "1. Install Arduino IDE on your computer.",
+        readmeStep2: "2. Open the 'wifi_repeater.ino' file.",
+        readmeStep3: "3. Connect your ESP32 / Deneyap Kart via USB.",
+        readmeStep4: "4. Select your board and port from the Tools menu.",
+        readmeStep5: "5. Click 'Upload'.",
+        readmeNote: "Note: Your WiFi credentials have been automatically injected into the code.",
+        successMsg: "Configured successfully! Starting download..."
+    },
+    tr: {
+        title: "WIFI YAPILANDIRICI",
+        subtitle: "Genişleticini yapılandır ve yerel kaynak kodunu indir.",
+        targetTitle: "HEDEF AĞ",
+        targetSsid: "Ağ Adı (SSID)",
+        targetPass: "Şifre",
+        newTitle: "YENİ AĞ (UZATILAN)",
+        newSsid: "Yeni Ağ Adı",
+        newPass: "Yeni Şifre",
+        downloadBtn: "PAKETİ OLUŞTUR VE İNDİR (.ZIP)",
+        hint: "ZIP dosyası yapılandırılmış .ino dosyasını ve kurulum rehberini içerir.",
+        readmeTitle: "ESP32 WIFI GENİŞLETİCİ - KURULUM REHBERİ",
+        readmeStep1: "1. Bilgisayarınıza Arduino IDE kurun.",
+        readmeStep2: "2. 'wifi_repeater.ino' dosyasını açın.",
+        readmeStep3: "3. ESP32 / Deneyap Kartınızı USB ile bağlayın.",
+        readmeStep4: "4. Araçlar menüsünden kartınızı ve portunuzu seçin.",
+        readmeStep5: "5. 'Yükle' (Upload) butonuna basın.",
+        readmeNote: "Not: WiFi bilgileriniz koda otomatik olarak eklenmiştir.",
+        successMsg: "Yapılandırma başarılı! İndirme başlıyor..."
+    }
 };
 
-// Log function
-function log(msg) {
-    consoleElement.innerText += "\n> " + msg;
-    consoleElement.scrollTop = consoleElement.scrollHeight;
+let currentLang = 'en';
+
+function updateUI() {
+    const t = translations[currentLang];
+    document.getElementById('ui-title').innerText = t.title;
+    document.getElementById('ui-subtitle').innerText = t.subtitle;
+    document.getElementById('ui-target-title').innerText = t.targetTitle;
+    document.getElementById('ui-target-ssid-label').innerText = t.targetSsid;
+    document.getElementById('ui-target-pass-label').innerText = t.targetPass;
+    document.getElementById('ui-new-title').innerText = t.newTitle;
+    document.getElementById('ui-new-ssid-label').innerText = t.newSsid;
+    document.getElementById('ui-new-pass-label').innerText = t.newPass;
+    document.getElementById('ui-download-text').innerText = t.downloadBtn;
+    document.getElementById('ui-hint').innerText = t.hint;
 }
 
-// Byte replacement function
-function patchBinary(buffer, placeholder, newValue) {
-    const view = new Uint8Array(buffer);
-    const placeholderBytes = new TextEncoder().encode(placeholder);
-    const newValueBytes = new TextEncoder().encode(newValue);
-
-    let count = 0;
-    for (let i = 0; i < view.length - placeholderBytes.length; i++) {
-        let match = true;
-        for (let j = 0; j < placeholderBytes.length; j++) {
-            if (view[i + j] !== placeholderBytes[j]) {
-                match = false;
-                break;
-            }
-        }
-
-        if (match) {
-            log(`Bilgi yamaniyor: ${placeholder.substring(0, 10)}...`);
-            // Fill with 0s first
-            view.fill(0, i, i + 64);
-            // Insert new value
-            view.set(newValueBytes.slice(0, 63), i);
-            count++;
-        }
-    }
-    return count > 0;
-}
-
-connectBtn.addEventListener('click', async () => {
-    try {
-        if (device) {
-            await device.close();
-            device = null;
-            transport = null;
-            esploader = null;
-            statusDot.className = "status-dot status-disconnected";
-            statusText.innerText = "Bağlantı Kesildi";
-            connectBtn.innerText = "🔌 Bağlan";
-            flashBtn.disabled = true;
-            return;
-        }
-
-        device = await navigator.serial.requestPort();
-        transport = new esptooljs.Transport(device);
-        
-        log("Karta bağlanılıyor...");
-        await transport.connect();
-        
-        statusDot.className = "status-dot status-connected";
-        statusText.innerText = "Kart Bağlı";
-        connectBtn.innerText = "❌ Bağlantıyı Kes";
-        flashBtn.disabled = false;
-        log("Bağlantı başarılı!");
-
-    } catch (e) {
-        log("Hata: " + e.message);
-    }
+// Language Toggle
+document.getElementById('lang-en').addEventListener('click', () => {
+    currentLang = 'en';
+    document.getElementById('lang-en').classList.add('active');
+    document.getElementById('lang-tr').classList.remove('active');
+    updateUI();
 });
 
-flashBtn.addEventListener('click', async () => {
+document.getElementById('lang-tr').addEventListener('click', () => {
+    currentLang = 'tr';
+    document.getElementById('lang-tr').classList.add('active');
+    document.getElementById('lang-en').classList.remove('active');
+    updateUI();
+});
+
+// Binary Replacement Utility
+function patchCode(code, targetSsid, targetPass, newSsid, newPass) {
+    let patched = code;
+    patched = patched.replaceAll("TARGET_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", targetSsid);
+    patched = patched.replaceAll("TARGET_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", targetPass);
+    patched = patched.replaceAll("NEW_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", newSsid);
+    patched = patched.replaceAll("NEW_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", newPass);
+    return patched;
+}
+
+// Download Action
+document.getElementById('download-btn').addEventListener('click', async () => {
     const targetSsid = document.getElementById('target-ssid').value;
     const targetPass = document.getElementById('target-pass').value;
-    const newSsid = document.getElementById('new-ssid').value || "Deneyap_Extender";
+    const newSsid = document.getElementById('new-ssid').value || "ESP32_Extender";
     const newPass = document.getElementById('new-pass').value;
 
     if (!targetSsid || !targetPass || !newPass) {
-        alert("Lütfen tüm alanları doldurun!");
+        alert(currentLang === 'tr' ? "Lütfen tüm alanları doldurun!" : "Please fill in all fields!");
         return;
     }
 
-    flashBtn.disabled = true;
-    log("Binary dosyası indiriliyor...");
-
     try {
-        // Fetch the binary created by GitHub Actions
-        const response = await fetch('./bin/wifi_repeater.bin');
-        if (!response.ok) throw new Error("Binary dosyası bulunamadı! Lütfen önce GitHub Actions'ın bitmesini bekleyin.");
+        // Fetch original .ino content
+        const response = await fetch('wifi_repeater.ino');
+        const originalCode = await response.text();
         
-        let buffer = await response.arrayBuffer();
-        
-        // Patch strings
-        patchBinary(buffer, "TARGET_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", targetSsid);
-        patchBinary(buffer, "TARGET_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", targetPass);
-        patchBinary(buffer, "NEW_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", newSsid);
-        patchBinary(buffer, "NEW_PASS_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", newPass);
+        // Patch the code
+        const finalCode = patchCode(originalCode, targetSsid, targetPass, newSsid, newPass);
 
-        log("Yükleme başlıyor... Lütfen bekleyin.");
+        // Generate Files
+        const zip = new JSZip();
         
-        esploader = new esptooljs.ESPLoader(transport, 115200, null);
-        await esploader.main_fn();
+        // Add .ino
+        zip.file("wifi_repeater/wifi_repeater.ino", finalCode);
         
-        const fileArray = [{ data: buffer, address: 0x10000 }];
-        
-        await esploader.write_flash({
-            fileArray: fileArray,
-            flashSize: 'keep',
-            flashMode: 'keep',
-            flashFreq: 'keep',
-            eraseAll: false,
-            compress: true,
-            reportProgress: (curr, total) => {
-                const progress = Math.round((curr / total) * 100);
-                statusText.innerText = `Yükleniyor: %${progress}`;
-            }
-        });
+        // Add README
+        const t = translations[currentLang];
+        const readmeContent = `${t.readmeTitle}\n\n${t.readmeStep1}\n${t.readmeStep2}\n${t.readmeStep3}\n${t.readmeStep4}\n${t.readmeStep5}\n\n${t.readmeNote}`;
+        zip.file("wifi_repeater/README.txt", readmeContent);
 
-        log("TEBRİKLER! Yükleme başarıyla tamamlandı.");
-        statusText.innerText = "Yükleme Tamamlandı!";
+        // Generate ZIP and trigger download
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "wifi_extender_config.zip";
+        link.click();
         
-    } catch (e) {
-        log("GÜNCELLEME HATASI: " + e.message);
-        flashBtn.disabled = false;
+        console.log(t.successMsg);
+    } catch (err) {
+        console.error("Error generating ZIP:", err);
+        alert("Download failed. Make sure you are running from a server (like GitHub Pages).");
     }
 });
+
+// Initial Load
+updateUI();

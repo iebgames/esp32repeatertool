@@ -1,58 +1,75 @@
 <!DOCTYPE html>
-<html lang="tr">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esp32 WiFi Extender Kit</title>
+    <title>ESP32 Extender | Configurator</title>
     <link rel="stylesheet" href="style.css">
-    <!-- esptool-js modül olarak script.js içinde import edilecek -->
+    <!-- Google Fonts: Rajdhani for Tech feel, Inter for Clean body -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- JSZip for ZIP generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
-
 <body>
-    <div class="container">
-        <header>
-            <h1>ESP32 EXTENDER</h1>
-            <p class="subtitle">WiFi Sinyal Güçlendirme Paneli</p>
-        </header>
-
-        <section>
-            <div class="section-title">Hedef Ağ (Uzatılacak olan)</div>
-            <label for="target-ssid">Ağ Adı (SSID)</label>
-            <input type="text" id="target-ssid" placeholder="Mevcut Wi-Fi adın">
-
-            <label for="target-pass">Şifre</label>
-            <input type="password" id="target-pass" placeholder="Ağ şifresi">
-        </section>
-
-        <section>
-            <div class="section-title">Yeni Ağ (Genişletilmiş olan)</div>
-            <label for="new-ssid">Yeni Ağ Adı</label>
-            <input type="text" id="new-ssid" placeholder="Deneyap_Extender">
-
-            <label for="new-pass">Yeni Şifre</label>
-            <input type="password" id="new-pass" placeholder="Minimum 8 karakter">
-        </section>
-
-        <div class="controls">
-            <button id="connect-btn">🔌 Bağlan</button>
-            <select id="baud-rate">
-                <option value="115200">115200 Baud</option>
-                <option value="460800">460800 Baud</option>
-                <option value="921600" selected>921600 Baud</option>
-            </select>
-            <button id="flash-btn" disabled>🚀 Karta Yükle</button>
+    <div class="glow-overlay"></div>
+    
+    <nav class="navbar">
+        <div class="brand">
+            <span class="tech-text">ESP32</span><span class="sub-text">EXTENDER</span>
         </div>
-
-        <div id="status-bar" style="margin-top: 1rem; font-size: 0.8rem; text-align: center;">
-            <span class="status-dot status-disconnected" id="status-dot"></span>
-            <span id="status-text">Bağlantı Yok</span>
+        <div class="lang-switcher">
+            <button id="lang-en" class="active">EN</button>
+            <button id="lang-tr">TR</button>
         </div>
+    </nav>
 
-        <div id="console">Konsol çıktıları burada görünecek...</div>
-    </div>
+    <main class="content">
+        <div class="glass-card">
+            <div class="card-header">
+                <h2 id="ui-title">WIFI CONFIGURATOR</h2>
+                <p id="ui-subtitle">Configure your extender and download the local source code.</p>
+            </div>
+
+            <div class="config-grid">
+                <!-- Target Network -->
+                <div class="input-section">
+                    <h3 id="ui-target-title">TARGET NETWORK</h3>
+                    <div class="input-group">
+                        <label id="ui-target-ssid-label">SSID (WiFi Name)</label>
+                        <input type="text" id="target-ssid" placeholder="Home_WiFi">
+                    </div>
+                    <div class="input-group">
+                        <label id="ui-target-pass-label">Password</label>
+                        <input type="password" id="target-pass" placeholder="********">
+                    </div>
+                </div>
+
+                <!-- Extended Network -->
+                <div class="input-section">
+                    <h3 id="ui-new-title">EXTENDED NETWORK</h3>
+                    <div class="input-group">
+                        <label id="ui-new-ssid-label">New SSID</label>
+                        <input type="text" id="new-ssid" placeholder="ESP32_Extender">
+                    </div>
+                    <div class="input-group">
+                        <label id="ui-new-pass-label">New Password</label>
+                        <input type="password" id="new-pass" placeholder="Minimum 8 chars">
+                    </div>
+                </div>
+            </div>
+
+            <button id="download-btn" class="main-btn">
+                <span id="ui-download-text">GENERATE & DOWNLOAD (.ZIP)</span>
+            </button>
+            
+            <p class="hint-text" id="ui-hint">The ZIP will contain the pre-configured .ino file and a setup guide.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Developed with <span class="heart">❤</span> by IEB STUDIO</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
-
 </html>
