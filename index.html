@@ -3,71 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Extender | Configurator</title>
+    <title>IEB Studio | ESP32 WiFi Extender</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts: Rajdhani for Tech feel, Inter for Clean body -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <!-- JSZip for ZIP generation -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
-    <div class="glow-overlay"></div>
+    <!-- Premium effects containers -->
+    <div class="grain-overlay"></div>
+    <div class="orbs-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
     
     <nav class="navbar">
-        <div class="brand">
-            <span class="tech-text">ESP32</span><span class="sub-text">EXTENDER</span>
+        <div class="logo">
+            <span class="ieb">IEB</span><span class="studio">STUDIO</span>
+            <div class="tag">WIFI INFRA</div>
         </div>
-        <div class="lang-switcher">
-            <button id="lang-en" class="active">EN</button>
-            <button id="lang-tr">TR</button>
+        <div class="nav-right">
+            <div class="lang-pill">
+                <button id="lang-en" class="active">EN</button>
+                <button id="lang-tr">TR</button>
+            </div>
         </div>
     </nav>
 
-    <main class="content">
-        <div class="glass-card">
-            <div class="card-header">
-                <h2 id="ui-title">WIFI CONFIGURATOR</h2>
-                <p id="ui-subtitle">Configure your extender and download the local source code.</p>
-            </div>
-
-            <div class="config-grid">
-                <!-- Target Network -->
-                <div class="input-section">
-                    <h3 id="ui-target-title">TARGET NETWORK</h3>
-                    <div class="input-group">
-                        <label id="ui-target-ssid-label">SSID (WiFi Name)</label>
-                        <input type="text" id="target-ssid" placeholder="Home_WiFi">
-                    </div>
-                    <div class="input-group">
-                        <label id="ui-target-pass-label">Password</label>
-                        <input type="password" id="target-pass" placeholder="********">
-                    </div>
-                </div>
-
-                <!-- Extended Network -->
-                <div class="input-section">
-                    <h3 id="ui-new-title">EXTENDED NETWORK</h3>
-                    <div class="input-group">
-                        <label id="ui-new-ssid-label">New SSID</label>
-                        <input type="text" id="new-ssid" placeholder="ESP32_Extender">
-                    </div>
-                    <div class="input-group">
-                        <label id="ui-new-pass-label">New Password</label>
-                        <input type="password" id="new-pass" placeholder="Minimum 8 chars">
-                    </div>
-                </div>
-            </div>
-
-            <button id="download-btn" class="main-btn">
-                <span id="ui-download-text">GENERATE & DOWNLOAD (.ZIP)</span>
-            </button>
+    <main>
+        <div class="main-card">
+            <div class="glass-morph"></div>
             
-            <p class="hint-text" id="ui-hint">The ZIP will contain the pre-configured .ino file and a setup guide.</p>
+            <header>
+                <h1 id="ui-title">WIFI CONFIGURATOR</h1>
+                <p id="ui-subtitle">Premium extender setup for professional network expansion.</p>
+            </header>
+
+            <div class="form-container">
+                <div class="input-block">
+                    <div class="block-label" id="ui-target-title">SOURCE NETWORK</div>
+                    <div class="input-field">
+                        <label id="ui-target-ssid-label">SSID</label>
+                        <input type="text" id="target-ssid" spellcheck="false">
+                    </div>
+                    <div class="input-field">
+                        <label id="ui-target-pass-label">PASSWORD</label>
+                        <input type="password" id="target-pass">
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="input-block">
+                    <div class="block-label" id="ui-new-title">EXTENDED NETWORK</div>
+                    <div class="input-field">
+                        <label id="ui-new-ssid-label">NEW SSID</label>
+                        <input type="text" id="new-ssid" value="IEB_Extender" spellcheck="false">
+                    </div>
+                    <div class="input-field">
+                        <label id="ui-new-pass-label">NEW PASSWORD</label>
+                        <input type="password" id="new-pass">
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="download-btn" class="ieb-btn">
+                    <div class="btn-glow"></div>
+                    <span id="ui-download-text">DEPLOY & DOWNLOAD (.ZIP)</span>
+                </button>
+                <p class="footer-hint" id="ui-hint">Auto-configured source code & setup manual included.</p>
+            </div>
         </div>
     </main>
 
-    <footer>
-        <p>&copy; 2026 Developed with <span class="heart">❤</span> by IEB STUDIO</p>
+    <footer class="ieb-footer">
+        <p>© 2026 <span class="ieb-mini">IEB STUDIO</span>. ALL RIGHTS RESERVED.</p>
     </footer>
 
     <script src="script.js"></script>

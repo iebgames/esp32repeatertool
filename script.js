@@ -1,43 +1,43 @@
 const translations = {
     en: {
         title: "WIFI CONFIGURATOR",
-        subtitle: "Configure your extender and download the local source code.",
-        targetTitle: "TARGET NETWORK",
-        targetSsid: "SSID (WiFi Name)",
-        targetPass: "Password",
+        subtitle: "Premium extender setup for professional network expansion.",
+        targetTitle: "SOURCE NETWORK",
+        targetSsid: "SSID",
+        targetPass: "PASSWORD",
         newTitle: "EXTENDED NETWORK",
-        newSsid: "New SSID",
-        newPass: "New Password",
-        downloadBtn: "GENERATE & DOWNLOAD (.ZIP)",
-        hint: "The ZIP will contain the pre-configured .ino file and a setup guide.",
-        readmeTitle: "ESP32 WIFI EXTENDER - SETUP GUIDE",
-        readmeStep1: "1. Install Arduino IDE on your computer.",
-        readmeStep2: "2. Open the 'wifi_repeater.ino' file.",
-        readmeStep3: "3. Connect your ESP32 / Deneyap Kart via USB.",
-        readmeStep4: "4. Select your board and port from the Tools menu.",
-        readmeStep5: "5. Click 'Upload'.",
-        readmeNote: "Note: Your WiFi credentials have been automatically injected into the code.",
-        successMsg: "Configured successfully! Starting download..."
+        newSsid: "NEW SSID",
+        newPass: "NEW PASSWORD",
+        downloadBtn: "DEPLOY & DOWNLOAD (.ZIP)",
+        hint: "Auto-configured source code & setup manual included.",
+        readmeTitle: "IEB STUDIO | WIFI INFRASTRUCTURE SETUP GUIDE",
+        readmeStep1: "1. Download and install Arduino IDE (v2.x recommended).",
+        readmeStep2: "2. Open 'wifi_repeater.ino' from the folder.",
+        readmeStep3: "3. Connect your board via USB.",
+        readmeStep4: "4. Select 'Deneyap Kart' (v2.0.0+) or 'ESP32 Dev Module'.",
+        readmeStep5: "5. Click the 'Upload' arrow button.",
+        readmeNote: "SYSTEM CORE: WiFi credentials have been injected via IEB Binary Patcher.",
+        successMsg: "IEB System Ready: Generating artifacts..."
     },
     tr: {
         title: "WIFI YAPILANDIRICI",
-        subtitle: "Genişleticini yapılandır ve yerel kaynak kodunu indir.",
-        targetTitle: "HEDEF AĞ",
-        targetSsid: "Ağ Adı (SSID)",
-        targetPass: "Şifre",
-        newTitle: "YENİ AĞ (UZATILAN)",
-        newSsid: "Yeni Ağ Adı",
-        newPass: "Yeni Şifre",
-        downloadBtn: "PAKETİ OLUŞTUR VE İNDİR (.ZIP)",
-        hint: "ZIP dosyası yapılandırılmış .ino dosyasını ve kurulum rehberini içerir.",
-        readmeTitle: "ESP32 WIFI GENİŞLETİCİ - KURULUM REHBERİ",
-        readmeStep1: "1. Bilgisayarınıza Arduino IDE kurun.",
-        readmeStep2: "2. 'wifi_repeater.ino' dosyasını açın.",
-        readmeStep3: "3. ESP32 / Deneyap Kartınızı USB ile bağlayın.",
-        readmeStep4: "4. Araçlar menüsünden kartınızı ve portunuzu seçin.",
+        subtitle: "Profesyonel ağ genişletme için premium kurulum paneli.",
+        targetTitle: "KAYNAK AĞ",
+        targetSsid: "AĞ ADI (SSID)",
+        targetPass: "ŞİFRE",
+        newTitle: "GENİŞLETİLMİŞ AĞ",
+        newSsid: "YENİ AĞ ADI",
+        newPass: "YENİ ŞİFRE",
+        downloadBtn: "DAĞIT VE İNDİR (.ZIP)",
+        hint: "Yapılandırılmış kaynak kodu ve kurulum kılavuzu dahildir.",
+        readmeTitle: "IEB STUDIO | WIFI ALTYAPI KURULUM REHBERİ",
+        readmeStep1: "1. Arduino IDE (v2.x önerilir) indirin ve kurun.",
+        readmeStep2: "2. Klasördeki 'wifi_repeater.ino' dosyasını açın.",
+        readmeStep3: "3. Kartınızı USB ile bilgisayara bağlayın.",
+        readmeStep4: "4. Araçlar menüsünden 'Deneyap Kart' veya 'ESP32 Dev Module' seçin.",
         readmeStep5: "5. 'Yükle' (Upload) butonuna basın.",
-        readmeNote: "Not: WiFi bilgileriniz koda otomatik olarak eklenmiştir.",
-        successMsg: "Yapılandırma başarılı! İndirme başlıyor..."
+        readmeNote: "SİSTEM ÇEKİRDEĞİ: WiFi bilgileri IEB Binary Patcher ile koda işlenmiştir.",
+        successMsg: "IEB Sistemi Hazır: Dosyalar oluşturuluyor..."
     }
 };
 
@@ -57,7 +57,7 @@ function updateUI() {
     document.getElementById('ui-hint').innerText = t.hint;
 }
 
-// Language Toggle
+// Language Controls
 document.getElementById('lang-en').addEventListener('click', () => {
     currentLang = 'en';
     document.getElementById('lang-en').classList.add('active');
@@ -72,7 +72,7 @@ document.getElementById('lang-tr').addEventListener('click', () => {
     updateUI();
 });
 
-// Binary Replacement Utility
+// Patching Engine
 function patchCode(code, targetSsid, targetPass, newSsid, newPass) {
     let patched = code;
     patched = patched.replaceAll("TARGET_SSID_PLACEHOLDER_64BYTES_A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6", targetSsid);
@@ -82,50 +82,44 @@ function patchCode(code, targetSsid, targetPass, newSsid, newPass) {
     return patched;
 }
 
-// Download Action
+// ZIP Generator
 document.getElementById('download-btn').addEventListener('click', async () => {
     const targetSsid = document.getElementById('target-ssid').value;
     const targetPass = document.getElementById('target-pass').value;
-    const newSsid = document.getElementById('new-ssid').value || "ESP32_Extender";
+    const newSsid = document.getElementById('new-ssid').value || "IEB_EXTENDER";
     const newPass = document.getElementById('new-pass').value;
 
     if (!targetSsid || !targetPass || !newPass) {
-        alert(currentLang === 'tr' ? "Lütfen tüm alanları doldurun!" : "Please fill in all fields!");
+        alert(currentLang === 'tr' ? "Lütfen tüm verileri eksiksiz girin!" : "Please provide all required credentials!");
         return;
     }
 
     try {
-        // Fetch original .ino content
         const response = await fetch('wifi_repeater.ino');
-        const originalCode = await response.text();
-        
-        // Patch the code
-        const finalCode = patchCode(originalCode, targetSsid, targetPass, newSsid, newPass);
+        const code = await response.text();
+        const finalCode = patchCode(code, targetSsid, targetPass, newSsid, newPass);
 
-        // Generate Files
         const zip = new JSZip();
-        
-        // Add .ino
+        // Create matching folder structure for Arduino IDE
         zip.file("wifi_repeater/wifi_repeater.ino", finalCode);
         
-        // Add README
         const t = translations[currentLang];
-        const readmeContent = `${t.readmeTitle}\n\n${t.readmeStep1}\n${t.readmeStep2}\n${t.readmeStep3}\n${t.readmeStep4}\n${t.readmeStep5}\n\n${t.readmeNote}`;
-        zip.file("wifi_repeater/README.txt", readmeContent);
-
-        // Generate ZIP and trigger download
-        const content = await zip.generateAsync({ type: "blob" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(content);
-        link.download = "wifi_extender_config.zip";
-        link.click();
+        const readme = `-----------------------------------\n${t.readmeTitle}\n-----------------------------------\n\n${t.readmeStep1}\n${t.readmeStep2}\n${t.readmeStep3}\n${t.readmeStep4}\n${t.readmeStep5}\n\n[INFO] ${t.readmeNote}`;
         
-        console.log(t.successMsg);
-    } catch (err) {
-        console.error("Error generating ZIP:", err);
-        alert("Download failed. Make sure you are running from a server (like GitHub Pages).");
+        zip.file("wifi_repeater/IEB_INSTRUCTIONS.txt", readme);
+
+        const blob = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "IEB_WiFi_Extender_Package.zip";
+        a.click();
+        
+        console.log("%c " + t.successMsg, "color: #00f2ff; font-weight: bold;");
+    } catch (e) {
+        alert("System error. Ensure you are using a web server (GitHub Pages).");
     }
 });
 
-// Initial Load
+// Init
 updateUI();
