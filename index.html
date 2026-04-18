@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esp32 WiFi Extender Kit</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- esptool-js bundle'ı CDN üzerinden çekiyoruz -->
+    <script src="https://unpkg.com/esptool-js@0.6.0/bundle.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>ESP32 EXTENDER</h1>
+            <p class="subtitle">WiFi Sinyal Güçlendirme Paneli</p>
+        </header>
+
+        <section>
+            <div class="section-title">Hedef Ağ (Uzatılacak olan)</div>
+            <label for="target-ssid">Ağ Adı (SSID)</label>
+            <input type="text" id="target-ssid" placeholder="Mevcut Wi-Fi adın">
+
+            <label for="target-pass">Şifre</label>
+            <input type="password" id="target-pass" placeholder="Ağ şifresi">
+        </section>
+
+        <section>
+            <div class="section-title">Yeni Ağ (Genişletilmiş olan)</div>
+            <label for="new-ssid">Yeni Ağ Adı</label>
+            <input type="text" id="new-ssid" placeholder="Deneyap_Extender">
+
+            <label for="new-pass">Yeni Şifre</label>
+            <input type="password" id="new-pass" placeholder="Minimum 8 karakter">
+        </section>
+
+        <div class="controls">
+            <button id="connect-btn">🔌 Bağlan</button>
+            <select id="baud-rate">
+                <option value="115200">115200 Baud</option>
+                <option value="460800">460800 Baud</option>
+                <option value="921600" selected>921600 Baud</option>
+            </select>
+            <button id="flash-btn" disabled>🚀 Karta Yükle</button>
+        </div>
+
+        <div id="status-bar" style="margin-top: 1rem; font-size: 0.8rem; text-align: center;">
+            <span class="status-dot status-disconnected" id="status-dot"></span>
+            <span id="status-text">Bağlantı Yok</span>
+        </div>
+
+        <div id="console">Konsol çıktıları burada görünecek...</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
